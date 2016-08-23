@@ -1,0 +1,81 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link href="node_modules/@okta/okta-signin-widget/dist/css/okta-sign-in.min.css" type="text/css" rel="stylesheet" />
+  <link href="node_modules/@okta/okta-signin-widget/dist/css/okta-theme.css" type="text/css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script src="node_modules/@okta/okta-signin-widget/dist/js/okta-sign-in-no-jquery.js"></script>
+</head>
+<body>
+
+<div style="padding:50px" id="language-picker">
+  Language
+  <select>
+    <option value="cs">Čeština (beta)</option>
+    <option value="da">Dansk (beta)</option>
+    <option value="de">Deutsch</option>
+    <option value="en">English</option>
+    <option value="es">Español (beta)</option>
+    <option value="fi">Suomen (beta)</option>
+    <option value="fr">Français (beta)</option>
+    <option value="it">Italiano (beta)</option>
+    <option value="ja">日本語</option>
+    <option value="ko">한국어 (beta)</option>
+    <option value="nl_NL">Nederlands (beta)</option>
+    <option value="pt_BR">Português (beta)</option>
+    <option value="ru">Русский (beta)</option>
+    <option value="sv">Svenska (beta)</option>
+    <option value="th">ภาษาไทย (beta)</option>
+    <option value="uk">Українська (beta)</option>
+    <option value="zh_CN">简体中文 (beta)</option>
+    <option value="zh_TW">繁體中文 (beta)</option>
+  </select>
+  <input type="button" value="Load" id="button" />
+</div>
+
+
+<div id="container"></div>  
+
+<script type="text/javascript">
+
+  var OKTA_BASE_URL = 'http://rain.okta1.com:1802',
+      PROPERTIES_PATH = '/node_modules/@okta/okta-signin-widget/dist/labels/json/';
+
+  function getI18nJson(type, countryCode) {
+    // English does not use the language code in the filename
+    var suffix = countryCode === 'en' ? '' : '_' + countryCode;
+    return $.getJSON(PROPERTIES_PATH + type + suffix + '.json')
+    .then(function (res) {
+      return res;
+    });
+  }
+
+  $('#button').click(function () {
+    var lang = $('select').val();
+
+    $.when(getI18nJson('country', lang), getI18nJson('login', lang))
+    .then(function (countryLabels, loginLabels) {
+      $('#language-picker').remove();
+
+      // Now that we have loaded the json labels that the user has selected,
+      // bootstrap the Okta Sign-In Widget as we would normally
+      var oktaSignIn = new OktaSignIn({ 
+        baseUrl: OKTA_BASE_URL,
+        country: countryLabels,
+        labels: loginLabels
+      });
+      oktaSignIn.renderEl(
+        { el: '#container' },
+        function (res) {
+          alert('Success!');
+        } 
+      );    
+    });
+  });
+
+</script>
+
+</body>
+</html>
+
+
