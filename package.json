@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@okta/okta-signin-widget": "1.6.0-beta.6"
+    "@okta/okta-signin-widget": "^1.6.0"
   }
 }
